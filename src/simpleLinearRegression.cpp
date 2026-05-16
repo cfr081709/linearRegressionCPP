@@ -49,7 +49,7 @@ float getPrediction(float x, float b, float m){
     return value;
 }
 
-std::vector<float> getPrediction(std::vector<int> xValues, float b, float m){
+std::vector<float> getPrediction(std::vector<int>& xValues, float& b, float& m){
     std::vector<float> results;
     for(int i = 0; i < xValues.size(); i++){
         float value = (m * xValues[i]) + b;
@@ -58,11 +58,32 @@ std::vector<float> getPrediction(std::vector<int> xValues, float b, float m){
     return results;
 }
 
-float leastSquareMinimization(std::vector<float> prediction, std::vector<double> trueValues){
+float leastSquareMinimization(std::vector<float>& prediction, std::vector<double>& trueValues){
     float leastSquares = 0.0;
     for(int i = 0; i < prediction.size(); i++){
         float residual = trueValues[i] - prediction[i];
         leastSquares += residual * residual;
     }
     return leastSquares;
+}
+
+double computeR2(const std::vector<double>& y, const std::vector<double>& yHat) {
+    int n = y.size();
+    double yMean = 0.0;
+    for (double val : y) yMean += val;
+    yMean /= n;
+
+    double SS_res = 0.0, SS_tot = 0.0;
+    for (int i = 0; i < n; i++) {
+        SS_res += pow(y[i] - yHat[i], 2);
+        SS_tot += pow(y[i] - yMean,    2);
+    }
+    return 1.0 - (SS_res / SS_tot);
+}
+
+double computeMSE(const std::vector<double>& y, const std::vector<double>& yHat) {
+    double sum = 0.0;
+    for (int i = 0; i < (int)y.size(); i++)
+        sum += pow(y[i] - yHat[i], 2);
+    return sum / y.size();
 }
